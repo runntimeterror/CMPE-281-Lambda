@@ -19,7 +19,8 @@ exports.handler = async (event, context) => {
   }
 
   const fileUri = `https://${inputBucket}.s3.amazonaws.com/${key}`,
-    jobName = `s3-lambda-audio-transcribe-${id}`;
+    //jobName = `s3-lambda-audio-transcribe-${id}`;
+    jobName = key.split('.')[0];
 
   const params = {
     IdentifyLanguage: true,
@@ -30,6 +31,6 @@ exports.handler = async (event, context) => {
     TranscriptionJobName: jobName,
     OutputBucketName: OUTPUT_BUCKET
   };
-
+  
   return transcribe.startTranscriptionJob(params).promise();
 };
