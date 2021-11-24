@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
-const fetch = require('node-fetch');
-const formData = require('form-data');
+const req = require('request');
+
 const s3 = new AWS.S3();
 
 const SOCKET_SERVER = 'https://socket.moochat.awesomepossum.dev:80/senddata'
@@ -21,11 +21,23 @@ exports.handler = async (event) => {
   let audioFile = await getAudio({ Bucket: bucketName, Key: fileName });
   let id = fileName.split('.')[0];
   const sessionId = id.split('-')[0]
-  var data = new formData()
-  data.append('somefile', audioFile)
-  data.append('sessionId', sessionId)
-  await fetch(SOCKET_SERVER, {
+
+  
+  var data = {
+    'sessionId': sessionId,
+    'somefile': {
+      value: audioFile,
+      options: {
+        contentType: 'audio/mp3',
+        filename: fileName
+      }
+    }
+  }
+
+  console.log(data)
+  return req({
     method: 'POST',
-    body: data
-  }).promise()
+    url: SOCKET_SERVER,
+    formData: data
+  })
 };
