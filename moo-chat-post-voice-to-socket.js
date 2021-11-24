@@ -16,14 +16,14 @@ async function getAudio(params) {
 }
 
 exports.handler = async (event) => {
-  let bucketName = event.Records[0].s3.bucket.name;
-  let fileName = event.Records[0].s3.object.key;
-  let audioFile = await getAudio({ Bucket: bucketName, Key: fileName });
-  let id = fileName.split('.')[0];
+  const bucketName = event.Records[0].s3.bucket.name;
+  const fileName = event.Records[0].s3.object.key;
+  const audioFile = await getAudio({ Bucket: bucketName, Key: fileName });
+  const id = fileName.split('.')[0];
   const sessionId = id.split('-')[0]
 
   
-  var data = {
+  const data = {
     'sessionId': sessionId,
     'somefile': {
       value: audioFile,
@@ -35,7 +35,7 @@ exports.handler = async (event) => {
   }
 
   console.log(data)
-  return req({
+  await req({
     method: 'POST',
     url: SOCKET_SERVER,
     formData: data
